@@ -5,7 +5,6 @@
     "start": "nodemon -L app.js",
     "test": "mocha --reporter spec",
     "prestart": "npm test"
-
   },
   "dependencies": {
     "body-parser": "^1.12.0",

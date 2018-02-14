@@ -9,7 +9,7 @@ Vagrant.configure(2) do |config|
 	  apt-get install -y build-essential python wget
 
 	  #https://github.com/nodesource/distributionss
-	  curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash -
+	  curl -sL https://deb.nodesource.com/setup_9.x | sudo -E bash -
 	  sudo apt-get install -y nodejs
 
 	  cd /vagrant
