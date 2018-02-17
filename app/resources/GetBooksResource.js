@@ -1,18 +1,19 @@
-(function () {
-    "use strict";
+// In this module we will handle some of the logic relating to fetching the list of books.
+// Essentially, we will use LibraryDAO.js to read and parse books.xml,
+// and then this class will convert the XML objects into Book.js objects
+// and put them into an array which it will then return in JSON format.
+// I also took the liberty of rewriting this module.
 
-    var LibraryDAO = require('../dao/LibraryDAO');
-    const Book = require('../dao/Book.js')
+// We will need few other modules
+const LibraryDAO = require('../dao/LibraryDAO')
 
-    // each book we need the information id, title, author, genre, publish date, price and description.
-    module.exports = function getBooks (callback, title) { // The title is optional and is only present when searching. (You need yo modify the books.js file first)
-        // console.log(...) subtask A
-        // console.log(JSON.stringify(...)) subtask B
-        callback(JSON.stringify([
-            new Book({ title: 'From C# to JavaScript: God Help Me', id: '1', author: 'Gill Bates', genre: 'Educational', publishDate: new Date().toLocaleDateString(), price: '$25.99', description: 'How to survive the coming of the end.' }),
-            new Book({ title: '101 Reasons Apples Are Good For You', id: '2', author: 'Jobber Steven', genre: '\"Educational\"', publishDate: new Date().toLocaleDateString(), price: '$899.99', description: 'We like apples here at Apple.' }),
-            new Book({ title: 'Java Belongs in a Museum', id: '3', author: 'Common Sense Inc.', genre: 'Religious Texts', publishDate: new Date().toLocaleDateString(), price: 'FREE', description: 'Why Java belongs in a museum.' })
-        ])) // subtask C
-    };
+// The title is optional and is only present when searching. (You need yo modify the books.js file first)
 
-}());
+// We will re-write this into a promise without a callback.
+module.exports = getBooks = title => {
+    return new Promise((resolve, reject) => {
+        LibraryDAO.readXMLFile(title)
+        .then(books => resolve(JSON.stringify(books)))
+        .catch(err => reject(err))
+    })
+}

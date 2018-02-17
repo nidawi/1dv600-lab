@@ -1,56 +1,53 @@
-(function () {
-    "use strict";
+// I had to rewrite this module. It was a mess.
+const express = require('express')
+const router = express.Router()
 
-    var express = require('express');
-    var router = express.Router();
+const AddBookResource = require('../../resources/AddBookResource')
+const EditBookResource = require('../../resources/EditBookResource')
+const GetBookResource = require('../../resources/GetBookResource')
+const GetBooksResource = require('../../resources/GetBooksResource')
+const RemoveBookResource = require('../../resources/RemoveBookResource')
 
-    var AddBookResource = require('../../resources/AddBookResource');
-    var EditBookResource = require('../../resources/EditBookResource');
-    var GetBookResource = require('../../resources/GetBookResource');
-    var GetBooksResource = require('../../resources/GetBooksResource');
-    var RemoveBookResource = require('../../resources/RemoveBookResource');
+router.get('/', function (req, res) {
+  res.type('json')
 
-
-
-    router.get('/', function (req, res) {
-        res.type('json');
-
-        GetBooksResource(function (data) {
-            res.send(data);
-        });
-    });
+  // It's a fancy promise now.
+  GetBooksResource()
+  .then(books => res.send(books))
+  .catch(err => res.status(500).send('Error 500 - Internal Server Error\n' + err.message))
+})
 
 
-    router.put('/', function (req, res) {
-        res.type('json');
+router.put('/', function (req, res) {
+  res.type('json')
 
-        AddBookResource(req.body, function () {
-            res.send("{}");
-        });
-    });
+  AddBookResource(req.body)
+  .then(data => res.send('{}'))
+  .catch(err => res.status(500).send('Error 500 - Internal Server Error\n' + err.message))
+})
 
 
-    router.route('/:bookId')
-        .get(function (req, res) {
-            res.type('json');
-            GetBookResource(req.params.bookId, function (data) {
-                res.send(data);
-            });
-        })
+router.route('/:bookId')
+  .get(function (req, res) {
+      res.type('json');
+      GetBookResource(req.params.bookId, function (data) {
+          res.send(data);
+      });
+  })
 
-        .post(function (req, res) {
-            res.type('json');
-            EditBookResource(req.params.bookId, req.body, function () {
-                res.send("{}");
-            });
-        })
+  .post(function (req, res) {
+      res.type('json');
+      EditBookResource(req.params.bookId, req.body, function () {
+          res.send("{}");
+      });
+  })
 
-        .delete(function (req, res) {
-            res.type('json');
-            RemoveBookResource(req.params.bookId, function () {
-                res.send("{}");
-            });
-        });
+  .delete(function (req, res) {
+      res.type('json')
 
-    module.exports = router;
-}());
+      RemoveBookResource(req.params.bookId)
+      .then(data => res.send('{}'))
+      .catch(err => res.status(500).send('Error 500 - Internal Server Error\n' + err.message))
+  })
+
+module.exports = router
